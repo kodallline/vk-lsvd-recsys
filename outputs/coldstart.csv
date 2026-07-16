@@ -1,0 +1,4 @@
+model,HitRate_10,NDCG_10,n_users
+ALS (CF only),0.01709,0.00515,702
+Content only,0.03276,0.01025,702
+ALS+Content,0.03276,0.01025,702

@@ -1,0 +1,5 @@
+comparison,delta_NDCG,ci_lo,ci_hi,p_value,significant
+ItemKNN vs ALS,-0.00096,-0.00387,0.00218,0.524,false
+UserKNN vs ALS,-0.00062,-0.00316,0.00196,0.652,false
+Content only vs ALS,-0.00764,-0.00999,-0.00564,0.0,true
+"ALS+Content (a=0.5, d=8) vs ALS",0.00023,-0.00061,0.00116,0.594,false
