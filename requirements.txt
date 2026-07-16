@@ -1,0 +1,8 @@
+implicit>=0.7
+polars>=1.0
+scipy>=1.11
+scikit-learn>=1.3
+matplotlib>=3.7
+numpy>=1.24
+nbformat
+huggingface_hub
