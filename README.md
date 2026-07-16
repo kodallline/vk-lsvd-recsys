@@ -38,14 +38,11 @@ python src/fetch_vk_lsvd_subsample.py     # соберёт vk_lsvd_mini/ (нуж
 ## Структура
 ```
 notebook/  — Jupyter-ноутбук (основной код, с выводами)
-report/    — отчёт .docx и .pdf (research-paper стиль)
+report/    — отчёт .docx и .pdf 
 src/       — analysis.py (скрипт-пайплайн), fetch_vk_lsvd_subsample.py
 outputs/   — таблицы .csv и графики .png
 docs/      — статический сайт (GitHub Pages)
 ```
 
 ## Отчёт
-Отчёт подготовлен отдельно в `report/VK-LSVD_report.docx` (research-paper стиль); PDF-версия собрана из него. Автор: Мейзлер Лия.
-
-## Литература
-VK-LSVD (WWW ’26) · Hu, Koren, Volinsky, *Collaborative Filtering for Implicit Feedback* (ICDM 2008) · библиотека `implicit`.
+Отчёт подготовлен отдельно в `report/VK-LSVD_report.docx`;
