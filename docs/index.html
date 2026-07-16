@@ -1,0 +1,78 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VK-LSVD · Коллаборативные vs контентные сигналы</title>
+<style>
+:root{--bg:#f8e8ff;--card:#ffffff;--soft:#f0d6ff;--ink:#3c1560;--mut:#9b4dca;--acc:#7b2fbe;--acc2:#9b4dca;--acc3:#b873d4;--line:#d4a0f0}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+.wrap{max-width:960px;margin:0 auto;padding:0 20px}
+header{background:linear-gradient(135deg,#f0d6ff,#f8e8ff);border-bottom:1px solid var(--line);padding:70px 0 54px}
+h1{font-size:2.15rem;margin:0 0 10px;letter-spacing:-.5px;color:var(--acc)}
+.sub{color:var(--mut);font-size:1.12rem;max-width:720px}
+.tags{margin:22px 0 6px;display:flex;gap:10px;flex-wrap:wrap}
+.btn{display:inline-block;padding:10px 18px;border-radius:10px;text-decoration:none;font-weight:600;font-size:.95rem}
+.btn.p{background:var(--acc);color:#fff}.btn.s{background:var(--card);color:var(--acc);border:1px solid var(--line)}
+section{padding:44px 0;border-bottom:1px solid var(--line)}
+h2{font-size:1.4rem;margin:0 0 14px;color:var(--acc)}h3{color:var(--acc2);font-weight:600;margin:26px 0 8px}
+p{color:#54307a}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:0 2px 10px rgba(155,77,202,.08)}
+.card .big{font-size:1.9rem;font-weight:800;margin:4px 0}
+.card.b .big{color:var(--acc)}.card.r .big{color:var(--acc3)}.card.g .big{color:var(--acc2)}
+.card small{color:var(--mut)}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.92rem;background:var(--card);border-radius:12px;overflow:hidden;box-shadow:0 2px 10px rgba(155,77,202,.08)}
+th{background:var(--soft);text-align:left;padding:10px 12px;color:var(--acc)}td{padding:9px 12px;border-top:1px solid var(--line)}
+td:not(:first-child),th:not(:first-child){text-align:center}
+img{max-width:100%;border-radius:12px;border:1px solid var(--line);background:#fff;margin:10px 0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.rec{background:linear-gradient(135deg,#f0d6ff,#d4a0f0);border:1px solid var(--acc3);border-radius:14px;padding:22px;margin-top:12px}
+footer{padding:34px 0;color:var(--mut);font-size:.9rem}
+@media(max-width:760px){.cards,.grid2{grid-template-columns:1fr}h1{font-size:1.7rem}}
+</style></head><body>
+<header><div class="wrap">
+<h1>Коллаборативные vs контентные сигналы в рекомендациях VK-LSVD</h1>
+<div class="sub">Насколько контентные эмбеддинги улучшают ранжирование поверх коллаборативной фильтрации — и где именно они действительно нужны.</div>
+<div class="tags">
+<a class="btn p" href="../notebook/VK-LSVD_recsys.ipynb">Jupyter-ноутбук</a>
+<a class="btn s" href="../report/VK-LSVD_report.pdf">Отчёт (PDF)</a>
+<a class="btn s" href="#results">Результаты</a>
+</div></div></header>
+
+<section><div class="wrap">
+<h2>Аннотация</h2>
+<p>На срезе из 1500 пользователей и 11522 видео VK-LSVD мы сравниваем три CF-базлайна (ALS, ItemKNN, UserKNN) с контент-обогащёнными вариантами, используя нативные 64-мерные контентные эмбеддинги. В протоколе полного ранжирования с временным сплитом сильнейшим методом оказывается <b>ALS</b>. Позднее слияние контента не даёт значимого прироста на тёплом каталоге, но на холодных айтемах контент почти удваивает HitRate@10.</p>
+<div class="cards">
+<div class="card b"><small>Лучший CF-базлайн</small><div class="big">ALS</div><small>NDCG@10 0.0092</small></div>
+<div class="card r"><small>Прирост от слияния (тёплый)</small><div class="big">+0.0002</div><small>p=0.59 — незначимо</small></div>
+<div class="card g"><small>Контент на cold-start</small><div class="big">×1.9</div><small>HitRate@10 vs ALS</small></div>
+</div></div></section>
+
+<section><div class="wrap">
+<h2>Данные и постановка</h2>
+<p>Полный VK-LSVD (~452 ГБ) необработаем локально; эксперименты — на подвыборке <code>up0.001_ip0.001</code>. Контентный эмбеддинг единый (видео+описание+аудио), компоненты упорядочены, поэтому раздельные «текст/изображение» на реальных данных недоступны — вместо них варьируем размерность (8/16/32/64) как силу контентного сигнала. Положительный класс: лайк/репост/сохранение/переход к автору или досмотр ≥70%. Метрики считаются полным ранжированием по каталогу с исключением виденного; α и d подбираются на 30% валидационных пользователей, метрики — на остальных 70%.</p>
+</div></section>
+
+<section id="results"><div class="wrap">
+<h2>Результаты</h2>
+<h3>Основное сравнение</h3>
+<table><tr><th>Модель</th><th>HitRate@1</th><th>HitRate@10</th><th>NDCG@10</th><th>Coverage@10</th></tr><tr><td>ALS (CF only)</td><td>0.0069</td><td>0.0815</td><td>0.0092</td><td>0.0426</td></tr><tr><td>ItemKNN</td><td>0.0029</td><td>0.0747</td><td>0.0082</td><td>0.0175</td></tr><tr><td>UserKNN</td><td>0.0059</td><td>0.0766</td><td>0.0086</td><td>0.0160</td></tr><tr><td>Content only</td><td>0.0010</td><td>0.0128</td><td>0.0015</td><td>0.0151</td></tr><tr><td>ALS+Content (a=0.5, d=8)</td><td>0.0079</td><td>0.0796</td><td>0.0094</td><td>0.0430</td></tr></table>
+<div class="grid2"><img src="assets/fig_radar.png" alt="radar"><img src="assets/fig_score_dist.png" alt="score dist"></div>
+<h3>Вес слияния и размерность контента</h3>
+<div class="grid2"><img src="assets/fig_alpha.png" alt="alpha"><img src="assets/fig_dim.png" alt="dim"></div>
+<p>Кривая по α плоская, качество на 8 компонентах не хуже, чем на 64 — контентный сигнал насыщается очень рано.</p>
+<h3>Статистическая значимость (парный бутстрап, NDCG@10)</h3>
+<table><tr><th>Сравнение</th><th>Δ NDCG@10</th><th>95% ДИ</th><th>p</th><th>значимо</th></tr><tr><td>ItemKNN vs ALS</td><td>-0.0010</td><td>[-0.0039, 0.0022]</td><td>0.524</td><td>нет</td></tr><tr><td>UserKNN vs ALS</td><td>-0.0006</td><td>[-0.0032, 0.0020]</td><td>0.652</td><td>нет</td></tr><tr><td>Content only vs ALS</td><td>-0.0076</td><td>[-0.0100, -0.0056]</td><td>0.000</td><td>да</td></tr><tr><td>ALS+Content (a=0.5, d=8) vs ALS</td><td>+0.0002</td><td>[-0.0006, 0.0012]</td><td>0.594</td><td>нет</td></tr></table>
+</div></section>
+
+<section><div class="wrap">
+<h2>Cold-start: где контент решает</h2>
+<p>Прячем 15% айтемов из обучения ALS — у него не остаётся сигнала. Контент использует эмбеддинги для всех айтемов и кратно выигрывает.</p>
+<div class="grid2"><table><tr><th>Модель (холодный пул)</th><th>HitRate@10</th><th>NDCG@10</th></tr><tr><td>ALS (CF only)</td><td>0.0171</td><td>0.0052</td></tr><tr><td>Content only</td><td>0.0328</td><td>0.0103</td></tr><tr><td>ALS+Content</td><td>0.0328</td><td>0.0103</td></tr></table><img src="assets/fig_cold.png" alt="cold"></div>
+</div></section>
+
+<section><div class="wrap">
+<h2>Рекомендация для продакшена</h2>
+<div class="rec"><p style="margin:0"><b>Применять контентные эмбеддинги как cold-start / long-tail сигнал, а не как глобальный ре-ранкер.</b> На тёплом каталоге основным ранжировщиком оставить ALS; контентную ветвь включать для айтемов с недостаточной историей. Достаточно первых ~8 компонент эмбеддинга — это снижает стоимость хранения и инференса.</p></div>
+</div></section>
+
+<footer><div class="wrap">VK Education · Рекомендательные системы · датасет deepvk/VK-LSVD · базлайны на библиотеке implicit</div></footer>
+</body></html>
